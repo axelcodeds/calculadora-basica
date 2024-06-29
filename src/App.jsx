@@ -9,31 +9,27 @@ function App() {
     const [status, setStatus] = useState('operacion')
 
     useEffect(() => {
-        if (numero1.toString().length > 8) {
-            setNumero1(numero1.toString().slice(0, 8))
+        const redondearNumeros = (numero, setNumero) => {
+            if (numero.toString().length > 8) {
+                setNumero(numero.toString().slice(0, 8))
+            }
         }
-        if (numero2.toString().length > 8) {
-            setNumero2(numero2.toString().slice(0, 8))
-        }
+        redondearNumeros(numero1, setNumero1)
+        redondearNumeros(numero2, setNumero2)
     }, [numero1, numero2])
 
     const updateNumero = numero => {
         if (status === 'resultado') {
-            setStatus('operacion')
             resetNumeros()
-
             setNumero1(numero)
-        } else if (operacion.length === 0) {
-            if (numero1 === '0') {
-                setNumero1(numero)
-            } else {
-                setNumero1(numero1 + numero)
-            }
+            setStatus('operacion')
         } else {
-            if (numero2 === '0') {
-                setNumero2(numero)
+            const nuevoNumero =
+                operacion.length === 0 ? numero1 + numero : numero2 + numero
+            if (operacion.length === 0) {
+                setNumero1(parseFloat(nuevoNumero).toString())
             } else {
-                setNumero2(numero2 + numero)
+                setNumero2(parseFloat(nuevoNumero).toString())
             }
         }
     }
@@ -64,21 +60,25 @@ function App() {
     }
 
     const updateResultadoEspecial = operacionEspecial => {
-        setOperacion('especial')
+        let resultado
         switch (operacionEspecial) {
             case 'sqr':
-                setNumero2(parseFloat(numero1) ** 2)
+                resultado = parseFloat(numero1) ** 2
                 break
             case 'cbr':
-                setNumero2(parseFloat(numero1) ** 3)
+                resultado = parseFloat(numero1) ** 3
                 break
             case 'sqrt':
-                setNumero2(Math.sqrt(parseFloat(numero1)))
+                resultado = Math.sqrt(parseFloat(numero1))
                 break
             default:
+                resultado = 'Error'
                 break
         }
+        setOperacion(operacionEspecial)
         setNumero1(operacionEspecial + '(' + numero1 + ')')
+        setNumero2(resultado)
+        setStatus('resultado')
     }
 
     const resetNumeros = () => {
