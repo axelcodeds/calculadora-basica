@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import './App.css'
 
@@ -7,6 +7,15 @@ function App() {
     const [numero2, setNumero2] = useState('0')
     const [operacion, setOperacion] = useState('')
     const [status, setStatus] = useState('operacion')
+
+    useEffect(() => {
+        if (numero1.toString().length > 8) {
+            setNumero1(numero1.toString().slice(0, 8))
+        }
+        if (numero2.toString().length > 8) {
+            setNumero2(numero2.toString().slice(0, 8))
+        }
+    }, [numero1, numero2])
 
     const updateNumero = numero => {
         if (status === 'resultado') {
@@ -52,6 +61,24 @@ function App() {
                 break
         }
         setStatus('resultado')
+    }
+
+    const updateResultadoEspecial = operacionEspecial => {
+        setOperacion('especial')
+        switch (operacionEspecial) {
+            case 'sqr':
+                setNumero2(parseFloat(numero1) ** 2)
+                break
+            case 'cbr':
+                setNumero2(parseFloat(numero1) ** 3)
+                break
+            case 'sqrt':
+                setNumero2(Math.sqrt(parseFloat(numero1)))
+                break
+            default:
+                break
+        }
+        setNumero1(operacionEspecial + '(' + numero1 + ')')
     }
 
     const resetNumeros = () => {
@@ -111,9 +138,24 @@ function App() {
                     <div onClick={() => backspace()} className='tecla'>
                         ⌫
                     </div>
-                    <div className='tecla'>x³</div>
-                    <div className='tecla'>x²</div>
-                    <div className='tecla'>√</div>
+                    <div
+                        onClick={() => updateResultadoEspecial('cbr')}
+                        className='tecla'
+                    >
+                        x³
+                    </div>
+                    <div
+                        onClick={() => updateResultadoEspecial('sqr')}
+                        className='tecla'
+                    >
+                        x²
+                    </div>
+                    <div
+                        onClick={() => updateResultadoEspecial('sqrt')}
+                        className='tecla'
+                    >
+                        √
+                    </div>
                     <div onClick={() => setOperacion('/')} className='tecla'>
                         /
                     </div>
